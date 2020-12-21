@@ -1,3 +1,4 @@
+import sys
 import pyodbc
 from datetime import datetime
 
@@ -19,13 +20,14 @@ statement_SO = f"SELECT * FROM fss.dbo.bsSaleOrder \
             AND DocDate <= '{date} 20:00:00'  \
             ORDER BY DocDate DESC"
 
-def get_PO_list():
-    statement_PO = f"SELECT * FROM fss.dbo.bsPR \
-                WHERE DocDate >= '{date} 00:00:00' \
-                AND DocDate <= '{date} 20:00:00'  \
-                ORDER BY DocDate DESC"
-    cursor.execute(statement_PO)
+statement_PO = f"SELECT * FROM fss.dbo.bsPR \
+            WHERE DocDate >= '{date} 00:00:00' \
+            AND DocDate <= '{date} 20:00:00'  \
+            ORDER BY DocDate DESC"
 
+
+def get_list(statement):
+    cursor.execute(statement)
     result = []
     for row in cursor:
         result.append(row)
@@ -33,14 +35,25 @@ def get_PO_list():
     return result
 
 
-def get_PO_items(po_list):
+def get_items(list_, doc_type):
+    data_table_names = {
+        'PO': 'fss.dbo.bsPRItem',
+        'SO': 'fss.dbo.bsSaleOrderItem'
+    }
     result_dict = {}
     item_list = []
-    for p in po_list:
-        PO_no = p[1]
-        statement_PO_items = f"SELECT * FROM fss.dbo.bsPRItem \
-                            WHERE DocNo = '{PO_no}'"
-        cursor.execute(statement_PO_items)
+    try:
+        table_name = data_table_names[doc_type]
+    except KeyError as e:
+        print(f"ERROR: DocType {e} not found")
+        sys.exit()
+        return {}, [] 
+
+    for p in list_:
+        doc_no = p[1]
+        statement_items = f"SELECT * FROM {table_name}\
+                            WHERE DocNo = '{doc_no}'"
+        cursor.execute(statement_items)
 
         package = []
         for r in cursor:
@@ -52,11 +65,14 @@ def get_PO_items(po_list):
     return result_dict, item_list
 
 
-def counting_items(items_list):
+def counting_items(items_list, doc_type):
+    qty_index = {
+        'PO': 8, 'SO': 9
+    }
     result = {}
     for item in items_list:
         item_name = item[4]
-        amount = item[8]
+        amount = item[qty_index[doc_type]]
 
         if item_name in result:
             result[item_name] += amount
@@ -66,20 +82,31 @@ def counting_items(items_list):
     return result
 
 
-if __name__ == '__main__':
-    # PO
-    po_list = get_PO_list()
-    po_items, raw_items_list = get_PO_items(po_list)
+def print_dict(dict_):
+    for (k, v) in dict_.items():
+        print(k, ":\t", v)
 
+def print_doc_items(list_, list_items):
     print("="*30, "PO LIST", "="*30)
-    for po in po_list:
+    for n in list_:
         print('='*50)
-        print(po[1])
+        print(n[1])
         print('='*50)
 
-        for item in po_items[po[1]]:
+        for item in list_items[n[1]]:
             print(item)
             print("*"*50)
+
+if __name__ == '__main__':
+    # PO
+    po_list = get_list(statement_PO)
+    po_items, raw_items_list = get_items(po_list, 'PO')
+
+    # SO
+    so_list = get_list(statement_SO)
+    so_items, raw_items_list = get_items(so_list, 'SO')
+
+    print_doc_items(po_list, po_items)
     
-    info_items = counting_items(raw_items_list)
-    print(info_items)
+    # info_items = counting_items(raw_items_list, 'PO')
+    # print_dict(info_items)
