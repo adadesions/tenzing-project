@@ -100,13 +100,13 @@ def print_doc_items(list_, list_items):
 if __name__ == '__main__':
     # PO
     po_list = get_list(statement_PO)
-    po_items, raw_items_list = get_items(po_list, 'PO')
+    po_items, po_items_list = get_items(po_list, 'PO')
 
     # SO
     so_list = get_list(statement_SO)
-    so_items, raw_items_list = get_items(so_list, 'SO')
+    so_items, so_items_list = get_items(so_list, 'SO')
 
     print_doc_items(po_list, po_items)
     
-    # info_items = counting_items(raw_items_list, 'PO')
-    # print_dict(info_items)
+    info_items = counting_items(po_items_list, 'PO')
+    print_dict(info_items)
