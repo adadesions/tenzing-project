@@ -97,6 +97,16 @@ def print_doc_items(list_, list_items):
             print(item)
             print("*"*50)
 
+# def pack_to_obj(list_, items_):
+#     result = {}
+#     for order in list_:
+#         order_docNo = order[1]
+#         result[order_docNo] = 
+#         for i in items_[order_docNo]:
+            
+
+
+
 if __name__ == '__main__':
     # PO
     po_list = get_list(statement_PO)
@@ -106,7 +116,5 @@ if __name__ == '__main__':
     so_list = get_list(statement_SO)
     so_items, so_items_list = get_items(so_list, 'SO')
 
-    print_doc_items(po_list, po_items)
-    
-    info_items = counting_items(po_items_list, 'PO')
-    print_dict(info_items)
+    # pack_to_obj(po_list, po_items)
+    # print_doc_items(po_list, po_items)
