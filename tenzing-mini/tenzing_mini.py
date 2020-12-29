@@ -1,5 +1,6 @@
 import sys
 import pyodbc
+import csv
 from datetime import datetime
 
 now = str(datetime.now()).split(" ")
@@ -103,8 +104,12 @@ def print_doc_items(list_, list_items):
 #         order_docNo = order[1]
 #         result[order_docNo] = 
 #         for i in items_[order_docNo]:
-            
 
+def save_to_csv(list_):
+    with open('data/my_test.csv', 'w', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        for row in list_:
+            writer.writerow(row)
 
 
 if __name__ == '__main__':
@@ -113,8 +118,7 @@ if __name__ == '__main__':
     po_items, po_items_list = get_items(po_list, 'PO')
 
     # SO
-    so_list = get_list(statement_SO)
-    so_items, so_items_list = get_items(so_list, 'SO')
+    # so_list = get_list(statement_SO)
+    # so_items, so_items_list = get_items(so_list, 'SO')
 
-    # pack_to_obj(po_list, po_items)
-    # print_doc_items(po_list, po_items)
+    save_to_csv(po_list)
