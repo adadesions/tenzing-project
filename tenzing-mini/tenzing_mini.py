@@ -5,9 +5,10 @@ from datetime import datetime
 
 now = str(datetime.now()).split(" ")
 date = now[0]
+print(date)
 
 # DEBUGING
-date = '2020-12-18'
+date = '2020-12-28'
 # DEBUGING
 
 conn = pyodbc.connect('Driver={SQL SERVER};'
@@ -87,6 +88,7 @@ def print_dict(dict_):
     for (k, v) in dict_.items():
         print(k, ":\t", v)
 
+
 def print_doc_items(list_, list_items):
     print("="*30, "PO LIST", "="*30)
     for n in list_:
@@ -105,8 +107,8 @@ def print_doc_items(list_, list_items):
 #         result[order_docNo] = 
 #         for i in items_[order_docNo]:
 
-def save_to_csv(list_):
-    with open('data/my_test.csv', 'w', newline='', encoding='utf-8') as file:
+def save_to_csv(list_, file_name):
+    with open(file_name, 'w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         for row in list_:
             writer.writerow(row)
@@ -121,4 +123,4 @@ if __name__ == '__main__':
     # so_list = get_list(statement_SO)
     # so_items, so_items_list = get_items(so_list, 'SO')
 
-    save_to_csv(po_list)
+    save_to_csv(po_list, 'data/my_test.csv')
